@@ -150,8 +150,8 @@ toc:
 # Donate
 donate:
   enable: true
-  alipay: https://photo.wenhuachen.com/share/tPRpCrjwQpXHC22BJyAo1YQGPxl1v4RN-DE6KA-4whKWYZvnjcGe17UOebITuGsiSqs
-  wechat: https://photo.wenhuachen.com/share/ENyFzOxuxLsFs2r92QscgMoixZQ0vnI5zfoBHTJbzQqHEDyf7Q3CEf2V6LtCQAgjx4c
+  alipay: https://photo.wenhuachen.com/api/assets/2d9bd047-b8e7-4ccd-87aa-852c47bd43aa/thumbnail?size=preview&key=tPRpCrjwQpXHC22BJyAo1YQGPxl1v4RN-DE6KA-4whKWYZvnjcGe17UOebITuGsiSqs&c=%2FfKI6fJAfqDWE9mudZl0FIJ0Raw%3D
+  wechat: https://photo.wenhuachen.com/api/assets/8411cd82-70f7-4806-a667-7429dd1fcc75/thumbnail?size=preview&key=ENyFzOxuxLsFs2r92QscgMoixZQ0vnI5zfoBHTJbzQqHEDyf7Q3CEf2V6LtCQAgjx4c&c=316QpXXVkUlISiKcDLXQNou9I9U%3D
 
 # Copyright
 post_copyright:
