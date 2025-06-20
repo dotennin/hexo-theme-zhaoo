@@ -41,7 +41,7 @@ var description = '';
   <% } %>
 
   <meta property="og:image" content="<%= config.url + url_for(page.image || '/img/tokyo-run-768x432.jpg') %>">
-  <meta property="og:description" content="<%= page.description %>" >
+  <meta property="og:description" content="<%= page.description || description %>" >
 
   <%- css(['css/style']) %>
 
