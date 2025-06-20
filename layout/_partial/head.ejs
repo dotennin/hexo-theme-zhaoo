@@ -40,7 +40,7 @@ var description = '';
     <meta rel="msapplication-TileColor" content="#000000">
   <% } %>
 
-  <meta property="og:image" content="<%= config.url + url_for(page.image || '/img/tokyo-run-768x432.jpg') %>">
+  <meta property="og:image" content="<%= page.image && page.image.startsWith('http') ? page.image : config.url + url_for(page.image || '/images/theme/post-image.jpg') %>">
   <meta property="og:description" content="<%= page.description || description %>" >
 
   <%- css(['css/style']) %>
