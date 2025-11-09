@@ -1,0 +1,132 @@
+// Enhanced Table Styles
+// - Sticky header with green background
+// - Sortable indicators
+// - Responsive wrapper
+// - Dark mode support
+// - Clean border style matching page theme
+
+.article .wrap .main .content table
+  position: relative !important
+  border-collapse: collapse !important
+  width: 100% !important
+  margin: 10px auto !important
+  min-width: 100% !important
+  text-align: center !important
+  border: 1px solid var(--color-border) !important
+
+.post-content table,
+.markdown-body table,
+.content table,
+article table
+  position: relative !important
+  border-collapse: collapse !important
+  width: 100% !important
+  margin: 10px auto !important
+  min-width: 100% !important
+  text-align: center !important
+  border: 1px solid var(--color-border) !important
+
+  thead
+    tr
+      background: transparent
+    
+    th
+      position: sticky !important
+      top: 0 !important
+      z-index: 1000 !important
+      background: #10b981 !important
+      color: #fff !important
+      padding: 8px !important
+      text-align: center !important
+      font-weight: 600 !important
+      border: 1px solid var(--color-border) !important
+      cursor: pointer !important
+      user-select: none
+      transition: background 0.2s ease
+      
+      &:hover
+        background: #059669 !important
+      
+      &.sortable::after
+        content: ' ⇅'
+        opacity: 0.7
+        margin-left: 5px
+        font-size: 0.9em
+      
+      &.sortable:hover::after
+        opacity: 1
+      
+      &.sort-asc::after
+        content: ' ↑'
+        opacity: 1
+      
+      &.sort-desc::after
+        content: ' ↓'
+        opacity: 1
+  
+  tbody
+    tr
+      transition: background 0.2s ease
+      
+      &:hover
+        background-color: rgba(16, 185, 129, 0.08)
+    
+    td
+      padding: 5px !important
+      border: 1px solid var(--color-border) !important
+      color: var(--color-text) !important
+      transition: background 0.2s ease
+
+// Dark mode support
+@media (prefers-color-scheme: dark)
+  .post-content table,
+  .markdown-body table,
+  .content table,
+  article table
+    thead th
+      background: #047857 !important
+      
+      &:hover
+        background: #065f46 !important
+    
+    tbody
+      tr:hover
+        background-color: rgba(16, 185, 129, 0.12)
+
+// Responsive wrapper
+.table-wrapper
+  position: relative
+  overflow-x: auto
+  overflow-y: visible
+  margin: 1em 0
+  
+  &::-webkit-scrollbar
+    height: 8px
+  
+  &::-webkit-scrollbar-track
+    background: var(--color-border)
+  
+  &::-webkit-scrollbar-thumb
+    background: #10b981
+    
+    &:hover
+      background: #059669
+  
+  // Firefox scrollbar
+  scrollbar-width: thin
+  scrollbar-color: #10b981 var(--color-border)
+
+// Better spacing for narrow screens
+@media (max-width: 768px)
+  .post-content table,
+  .markdown-body table,
+  .content table,
+  article table
+    font-size: 0.9em
+    
+    thead th
+      padding: 6px !important
+    
+    tbody td
+      padding: 4px !important
+
