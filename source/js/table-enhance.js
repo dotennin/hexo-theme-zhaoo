@@ -35,7 +35,41 @@
           sortTable(table, index, this);
         });
       });
+
+      // Handle sticky header on scroll
+      const scrollContainer = window; // or a specific scrolling element
+      scrollContainer.addEventListener('scroll', () => handleStickyHeader(table, thead));
+      // Initial check
+      handleStickyHeader(table, thead);
     });
+  }
+
+  function handleStickyHeader(table, thead) {
+    if (!thead) return;
+
+    const tableRect = table.getBoundingClientRect();
+    const headerHeight = document.querySelector('.header-inner')?.offsetHeight || 0;
+
+    // Check if the table is within the viewport
+    if (tableRect.top < window.innerHeight && tableRect.bottom > 0) {
+      // The table is visible
+      const stickyTop = Math.max(0, headerHeight - window.scrollY);
+      
+      if (tableRect.top < headerHeight) {
+        // When scrolling down, header should stick below site header
+        thead.style.transform = `translateY(${Math.max(0, -tableRect.top + headerHeight)}px)`;
+      } else {
+        // When scrolling up, header is at its normal position
+        thead.style.transform = 'translateY(0)';
+      }
+      
+      // Make header sticky
+      thead.querySelectorAll('th').forEach(th => {
+        th.style.position = 'sticky';
+        th.style.top = `${headerHeight}px`; // Stick below the site header
+      });
+
+    }
   }
 
   function sortTable(table, columnIndex, headerElement) {
