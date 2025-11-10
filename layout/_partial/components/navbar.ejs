@@ -11,6 +11,16 @@
   } else if (is_home()) {
     title = ' ';
   }
+  
+  // 构建菜单列表
+  var menuList = '';
+  for (var i in theme.menu) {
+    var arr = theme.menu[i].split('||');
+    var url = arr[0];
+    var name = arr[1];
+    menuList += 
+      `<a href="${url}" class="navbar-menu-item underline ${('/'+path.replace('index.html','') === trim(url)) ? 'active' : ''}">${name}</a>`;
+  } 
 %>
 
 <% if (title) { %>
@@ -29,12 +39,30 @@
         <i class="iconfont iconsearch j-navbar-search"></i>
       <% } %>
     </div>
-    <div class="center"><%= title %></div>
-    <div class="right">
-      <i class="iconfont iconmenu j-navbar-menu"></i>
+    
+    <!-- 桌面端菜单 -->
+    <div class="center navbar-menu-desktop">
+      <%- menuList %>
     </div>
+    
+    <!-- 移动端标题 -->
+    <div class="center navbar-title-mobile"><%= title %></div>
+    
+    <div class="right">
+      <!-- 移动端汉堡包菜单按钮 -->
+      <i class="iconfont iconmenu j-navbar-menu-toggle"></i>
+    </div>
+    
     <% if (theme.qrcode.enable) { %>
       <div id="qrcode-navbar"></div>
     <% } %>
+    
+    <!-- 移动端下拉菜单 -->
+    <div class="navbar-menu-mobile">
+      <%- menuList %>
+      <% if (theme.copyright) { %>
+        <div class="navbar-menu-copyright"><%- theme.copyright %></div>
+      <% } %>
+    </div>
   </nav>
 <% } %>

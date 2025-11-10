@@ -1,6 +1,13 @@
 <% if ((theme.toc.always_show && page.toc !== false) || (!theme.toc.always_show && page.toc === true)) { %>
+  <!-- 遮罩层 -->
+  <div class="toc-overlay"></div>
+  
+  <!-- 目录内容 -->
   <aside class="toc-wrap">
-    <h3 class="toc-title">文章目录：</h3>
+    <div class="toc-header">
+      <h3 class="toc-title">文章目录</h3>
+      <button class="toc-close-btn" aria-label="Close Table of Contents">×</button>
+    </div>
     <%- toc(page.content, {list_number: false, min_depth: theme.toc.min_depth, max_depth: theme.toc.max_depth}) %>
   </aside>
 <% } %>

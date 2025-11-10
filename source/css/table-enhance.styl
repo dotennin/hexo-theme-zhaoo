@@ -25,6 +25,7 @@ article table
   min-width: 100% !important
   text-align: center !important
   border: 1px solid var(--color-border) !important
+  margin-top: 20px !important
 
   thead
     tr
@@ -32,20 +33,20 @@ article table
     
     th
       position: sticky !important
-      top: 0 !important
-      z-index: 1000 !important
-      background: #10b981 !important
-      color: #fff !important
+      top: 0px !important
+      z-index: 10 !important
+      background: var(--color-text) !important
+      color: var(--color-background) !important
       padding: 8px !important
       text-align: center !important
       font-weight: 600 !important
       border: 1px solid var(--color-border) !important
       cursor: pointer !important
       user-select: none
-      transition: background 0.2s ease
+      transition: background 0.2s ease, opacity 0.2s ease
       
       &:hover
-        background: #059669 !important
+        opacity: 0.85 !important
       
       &.sortable::after
         content: ' ⇅'
@@ -69,7 +70,7 @@ article table
       transition: background 0.2s ease
       
       &:hover
-        background-color: rgba(16, 185, 129, 0.08)
+        background-color: rgba(128, 128, 128, 0.08)
     
     td
       padding: 5px !important
@@ -83,15 +84,9 @@ article table
   .markdown-body table,
   .content table,
   article table
-    thead th
-      background: #047857 !important
-      
-      &:hover
-        background: #065f46 !important
-    
     tbody
       tr:hover
-        background-color: rgba(16, 185, 129, 0.12)
+        background-color: rgba(128, 128, 128, 0.12)
 
 // Responsive wrapper
 .table-wrapper
@@ -107,14 +102,14 @@ article table
     background: var(--color-border)
   
   &::-webkit-scrollbar-thumb
-    background: #10b981
+    background: var(--color-text)
     
     &:hover
-      background: #059669
+      opacity: 0.8
   
   // Firefox scrollbar
   scrollbar-width: thin
-  scrollbar-color: #10b981 var(--color-border)
+  scrollbar-color: var(--color-text) var(--color-border)
 
 // Better spacing for narrow screens
 @media (max-width: 768px)

@@ -57,7 +57,8 @@
       
       if (tableRect.top < headerHeight) {
         // When scrolling down, header should stick below site header
-        thead.style.transform = `translateY(${Math.max(0, -tableRect.top + headerHeight)}px)`;
+        // 54px is fixed header height offset - 1px
+        thead.style.transform = `translateY(${Math.max(0, -tableRect.top + headerHeight + 54)}px)`;
       } else {
         // When scrolling up, header is at its normal position
         thead.style.transform = 'translateY(0)';

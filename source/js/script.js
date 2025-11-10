@@ -33,6 +33,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     activeFab: function () {
       $(".fab-up").addClass("fab-up-active");
       $(".fab-plus").addClass("fab-plus-active");
+      $(".fab-toc").addClass("fab-toc-active");
       $(".fab-daovoice").addClass("fab-daovoice-active");
       $(".fab-tencent-chao").addClass("fab-tencent-chao-active");
       $(".fab-like").addClass("fab-like-active");
@@ -40,6 +41,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     freezeFab: function () {
       $(".fab-up").removeClass("fab-up-active");
       $(".fab-plus").removeClass("fab-plus-active");
+      $(".fab-toc").removeClass("fab-toc-active");
       $(".fab-daovoice").removeClass("fab-daovoice-active");
       $(".fab-tencent-chao").removeClass("fab-tencent-chao-active");
       $(".fab-like").removeClass("fab-like-active");
@@ -275,7 +277,8 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       $(".fab-daovoice").on("click", function () {
         daovoice('openMessages');
       });
-      $(".fab-up, .fab-daovoice, fab-tencent-chao").on("click", function () {
+      // 点击其他按钮时收起FAB菜单
+      $(".fab-up, .fab-toc, .fab-like, .fab-daovoice, .fab-tencent-chao").on("click", function () {
         fn.freezeFab();
       });
       if (CONFIG.fab.always_show) {
@@ -290,10 +293,12 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
         $(".navbar").removeClass("hide");
       });
     },
-    scroolToTop: function () {
+    setupFabUp: function () {
       $(".fab-up").on("click", function () {
-        fn.scroolToTop();
-      })
+        $('body,html').animate({
+          scrollTop: '0px'
+        }, 800);
+      });
     },
     fancybox: function () {
       $(".fancybox").fancybox();
@@ -349,11 +354,31 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
         ZHAOO.utils.isDesktop() && fn.navbar.desktop();
         ZHAOO.utils.isMobile() && fn.navbar.mobile();
       }, 1000)).resize();
+      
+      // 移动端菜单切换
+      $(".j-navbar-menu-toggle").on("click", function (e) {
+        e.stopPropagation();
+        $(".navbar-menu-mobile").toggleClass("show");
+      });
+      
+      // 点击菜单项后关闭移动端菜单
+      $(".navbar-menu-mobile .navbar-menu-item").on("click", function () {
+        $(".navbar-menu-mobile").removeClass("show");
+      });
+      
+      // 点击页面其他地方关闭移动端菜单
+      $(document).on("click", function (e) {
+        if (!$(e.target).closest(".navbar").length) {
+          $(".navbar-menu-mobile").removeClass("show");
+        }
+      });
+      
+      // 保留原有的菜单按钮（如果还在使用）
       $(".j-navbar-menu").on("click", function () {
         fn.showMenu();
-        $(".navbar").addClass("hide");
         $(".qrcode").fadeOut(300);
       });
+      
       $(".j-navbar-qrcode").on("click", function () {
         if ($("#qrcode-navbar").is(":hidden")) {
           $("#qrcode-navbar").fadeIn(300);
@@ -366,7 +391,6 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       });
       $(".j-navbar-search").on("click", function () {
         fn.showSearch();
-        $(".navbar").addClass("hide");
         $(".qrcode").fadeOut(300);
       });
     },
@@ -406,6 +430,40 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
         $(".toc-link[href='#" + current[1] + "']").addClass("active");
       };
       f();
+    },
+    mobileToc: function () {
+      // 移动端目录功能
+      var $fabToc = $(".fab-toc");
+      var $closeBtn = $(".toc-close-btn");
+      var $tocWrap = $(".toc-wrap");
+      var $overlay = $(".toc-overlay");
+      
+      function openToc() {
+        $tocWrap.addClass('toc-open');
+        $overlay.addClass('toc-overlay-visible');
+        $("body").css("overflow", "hidden");
+      }
+      
+      function closeToc() {
+        $tocWrap.removeClass('toc-open');
+        $overlay.removeClass('toc-overlay-visible');
+        $("body").css("overflow", "");
+      }
+      
+      // fab-toc按钮的点击在fab函数中已经有freezeFab，所以这里只需要打开目录
+      $fabToc.on("click", function(e) {
+        openToc();
+      });
+      
+      $closeBtn.on("click", closeToc);
+      $overlay.on("click", closeToc);
+      
+      // 点击目录链接后关闭目录（移动端）
+      $(".toc-link").on("click", function() {
+        if ($(window).width() <= 1200) {
+          setTimeout(closeToc, 300);
+        }
+      });
     },
     scrollbar: function () {
       var totalH = $(document).height();
@@ -473,7 +531,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     action.fab();
     action.navbar();
     action.menu();
-    action.scroolToTop();
+    action.setupFabUp();
     action.preview();
     CONFIG.fancybox && action.fancybox();
     CONFIG.pjax && action.pjax();
@@ -483,6 +541,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     CONFIG.carrier.enable && action.carrier();
     CONFIG.qrcode.enable && action.qrcode();
     CONFIG.toc.enable && action.toc();
+    CONFIG.toc.enable && action.mobileToc();
     CONFIG.scrollbar.type === 'simple' && action.scrollbar();
     CONFIG.notification.enable && action.notification();
     CONFIG.search.enable && action.search();

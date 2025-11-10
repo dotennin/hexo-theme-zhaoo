@@ -1,31 +1,116 @@
+// 遮罩层
+.toc-overlay
+  display none
+  position fixed
+  top 0
+  left 0
+  right 0
+  bottom 0
+  background-color rgba(0, 0, 0, 0.5)
+  z-index 998
+  opacity 0
+  transition opacity 0.3s ease
+  pointer-events none
+  @media (max-width 1200px)
+    display block
+  &.toc-overlay-visible
+    opacity 1
+    pointer-events auto
+
 .toc-wrap
   position fixed
   top 70px
   background-color var(--color-background)
-  z-index 10
+  z-index 999
   padding 20px
   height calc(100vh - 140px)
   overflow auto
+  transition transform 0.3s ease
+  
+  // 桌面端样式
+  @media (min-width 1201px)
+    display block
+  
+  // 移动端样式
   @media (max-width 1200px)
-    display none
+    top 0
+    right 0
+    width 280px
+    max-width 80vw
+    height 100vh
+    padding 0
+    border-left 1px solid var(--color-border)
+    box-shadow -4px 0 12px rgba(0, 0, 0, 0.1)
+    transform translateX(100%)
+    pointer-events none
+    &.toc-open
+      transform translateX(0)
+      pointer-events auto
+  
   ol, li
     list-style none
+  
   & > :only-child
     display none
+  
+  // 目录头部
+  .toc-header
+    display none
+    @media (max-width 1200px)
+      display flex
+      align-items center
+      justify-content space-between
+      padding 20px
+      border-bottom 1px solid var(--color-border)
+      position sticky
+      top 0
+      background-color var(--color-background)
+      z-index 10
+  
   .toc-title
     font-size 1rem
     font-weight bold
-    margin-left calc(1rem + 3px)
+    margin 0
+    @media (min-width 1201px)
+      margin-left calc(1rem + 3px)
+      margin-bottom 10px
+  
+  .toc-close-btn
+    display none
+    @media (max-width 1200px)
+      display block
+      background none
+      border none
+      font-size 32px
+      line-height 1
+      color var(--color-text)
+      cursor pointer
+      padding 0
+      width 32px
+      height 32px
+      &:hover
+        color var(--color-link)
+  
   .toc
     position relative
     margin 0
     padding 0
+    @media (max-width 1200px)
+      padding 20px
+    
     .toc-link
       display block
       padding 4px 1rem
       border-left 3px solid transparent
+      color var(--color-text)
+      text-decoration none
+      transition all 0.2s ease
+      &:hover
+        color var(--color-link)
       &.active
-        color $color-link
+        color var(--color-link)
         font-weight bold
+        border-left-color var(--color-link)
+    
     .toc-child
       padding-left 1rem

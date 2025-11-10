@@ -7,40 +7,134 @@
   width 100%
   top 0
   z-index 50
-  background-color rgba(255, 255, 255, 0.8)
-  -webkit-backdrop-filter saturate(180%) blur(5px)
-  backdrop-filter saturate(180%) blur(5px)
-  transition transform 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9)
-  &.hide
-    transform translateY(-55px)
+  background-color rgba(255, 255, 255, 0.9)
+  -webkit-backdrop-filter saturate(180%) blur(10px)
+  backdrop-filter saturate(180%) blur(10px)
+  box-shadow 0 1px 3px rgba(0, 0, 0, 0.05)
+  transition background-color 0.3s ease
+  // 移除 hide 类，保持始终显示
   &.transparent
-    background-color: rgba(255, 255, 255, 0) !important;
-    backdrop-filter: none;
+    background-color: rgba(255, 255, 255, 0.7) !important
+  
   > div
     flex 1
     display inline-flex
     text-align center
+  
   .left
     justify-content flex-start
     padding-left 15px
     .iconfont:not(:first-child)
       margin-left 10px
+  
   .center
     justify-content center
-    opacity 0
-    transition opacity 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9)
-    &.hide
-      opacity 1
+    flex 2
+    
+  // 桌面端菜单
+  .navbar-menu-desktop
+    display none
+    align-items center
+    gap 30px
+    @media (min-width 769px)
+      display flex
+    
+    .navbar-menu-item
+      font-size 15px
+      color var(--color-text)
+      text-decoration none
+      padding 5px 10px
+      border-radius 4px
+      transition all 0.2s ease
+      white-space nowrap
+      &:hover
+        background-color rgba(0, 0, 0, 0.05)
+        color var(--color-link)
+      &.active
+        color var(--color-link)
+        font-weight 500
+      // 移除 underline 效果
+      &:before
+        display none !important
+  
+  // 移动端标题
+  .navbar-title-mobile
+    display flex
+    @media (min-width 769px)
+      display none
+  
   .right
     justify-content flex-end
     padding-right 15px
     .iconfont:not(:last-child)
       margin-right 10px
+  
   .iconfont
     font-size 22px
     color var(--color-text)
     &:hover
       cursor pointer
+      
+  // 移动端汉堡包按钮
+  .j-navbar-menu-toggle
+    display none
+    @media (max-width 768px)
+      display block
+  
+  // 移动端下拉菜单
+  .navbar-menu-mobile
+    position absolute
+    top 55px
+    left 0
+    width 100%
+    background-color rgba(255, 255, 255, 0.98)
+    -webkit-backdrop-filter saturate(180%) blur(10px)
+    backdrop-filter saturate(180%) blur(10px)
+    box-shadow 0 4px 12px rgba(0, 0, 0, 0.1)
+    padding 20px 0
+    display none
+    flex-direction column
+    max-height calc(100vh - 55px)
+    overflow-y auto
+    overflow-x hidden
+    // 隐藏滚动条但保持滚动功能
+    scrollbar-width none
+    -ms-overflow-style none
+    &::-webkit-scrollbar
+      display none
+    
+    &.show
+      @media (max-width 768px)
+        display flex
+    
+    .navbar-menu-item
+      padding 15px 30px
+      color var(--color-text)
+      text-decoration none
+      font-size 16px
+      border-left 3px solid transparent
+      transition all 0.2s ease
+      flex-shrink 0
+      &:hover
+        background-color rgba(0, 0, 0, 0.03)
+        border-left-color var(--color-link)
+        color var(--color-link)
+      &.active
+        color var(--color-link)
+        font-weight 500
+        border-left-color var(--color-link)
+      // 移除 underline 效果
+      &:before
+        display none !important
+    
+    .navbar-menu-copyright
+      padding 20px 30px 10px
+      font-size 12px
+      color var(--color-text-secondary)
+      text-align center
+      border-top 1px solid var(--color-border)
+      margin-top 10px
+  
   #qrcode-navbar
     position absolute
     display none
@@ -53,7 +147,3 @@
     img
       width 150px
       height 150px
-@media (max-width 768px)
-  .navbar
-    .center
-      display none

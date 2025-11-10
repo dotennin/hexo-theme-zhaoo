@@ -1,6 +1,9 @@
   <div class="fab fab-plus">
     <i class="iconfont iconplus"></i>
   </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
   <% if (is_post() && theme.leancloud.enable) { %>
     <div class="fab fab-like">
       <i class="iconfont iconheart"></i>
@@ -18,6 +21,8 @@
       </div>
     </a>
   <% } %>
-  <div class="fab fab-up">
-    <i class="iconfont iconcaret-up"></i>
-  </div>
+  <% if (is_post() && ((theme.toc.always_show && page.toc !== false) || (!theme.toc.always_show && page.toc === true))) { %>
+    <div class="fab fab-toc">
+      <i class="iconfont iconmenu"></i>
+    </div>
+  <% } %>
