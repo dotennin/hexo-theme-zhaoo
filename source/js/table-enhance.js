@@ -1,6 +1,6 @@
 /**
  * Enhanced Table Functionality
- * - Sticky header via CSS
+ * - Floating header below the fixed navbar
  * - Sortable columns
  * - Responsive wrapper
  */
@@ -8,9 +8,18 @@
 (function() {
   'use strict';
 
+  let floatingHeaders = [];
+  let floatingHeaderTicking = false;
+  let floatingHeaderListenersBound = false;
+
   function initTableEnhancements() {
     // Find all tables in post content
     const tables = document.querySelectorAll('.post-content table, .markdown-body table, .content table, article table');
+    floatingHeaders.forEach(({ thead }) => {
+      thead.style.transform = '';
+      thead.classList.remove('is-floating');
+    });
+    floatingHeaders = [];
     
     tables.forEach(table => {
       // Wrap table for responsive scrolling
@@ -20,6 +29,8 @@
         table.parentNode.insertBefore(wrapper, table);
         wrapper.appendChild(table);
       }
+      const wrapper = table.parentElement;
+      setupScrollAffordance(wrapper);
       
       // Add sorting functionality
       const thead = table.querySelector('thead');
@@ -29,6 +40,12 @@
       headers.forEach((header, index) => {
         header.classList.add('sortable');
         header.dataset.column = index;
+        header.tabIndex = 0;
+        header.setAttribute(
+          'aria-sort',
+          header.classList.contains('sort-asc') ? 'ascending' :
+            header.classList.contains('sort-desc') ? 'descending' : 'none'
+        );
 
         if (header.dataset.tableSortInitialized === 'true') return;
         header.dataset.tableSortInitialized = 'true';
@@ -37,9 +54,88 @@
         header.addEventListener('click', function() {
           sortTable(table, index, this);
         });
+        header.addEventListener('keydown', function(event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            sortTable(table, index, this);
+          }
+        });
       });
 
+      floatingHeaders.push({ table, thead, wrapper, offset: 0 });
     });
+
+    bindFloatingHeaderListeners();
+    updateFloatingHeaders();
+  }
+
+  function bindFloatingHeaderListeners() {
+    if (floatingHeaderListenersBound) return;
+    floatingHeaderListenersBound = true;
+    window.addEventListener('scroll', requestFloatingHeaderUpdate, { passive: true });
+    window.addEventListener('resize', requestFloatingHeaderUpdate);
+  }
+
+  function requestFloatingHeaderUpdate() {
+    if (floatingHeaderTicking) return;
+    floatingHeaderTicking = true;
+    window.requestAnimationFrame(updateFloatingHeaders);
+  }
+
+  function setupScrollAffordance(wrapper) {
+    updateScrollAffordance(wrapper);
+    if (wrapper.dataset.tableScrollInitialized === 'true') return;
+    wrapper.dataset.tableScrollInitialized = 'true';
+
+    let ticking = false;
+    wrapper.addEventListener('scroll', function() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function() {
+        updateScrollAffordance(wrapper);
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  function updateScrollAffordance(wrapper) {
+    const maxScrollLeft = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
+    const canScroll = maxScrollLeft > 1;
+    wrapper.classList.toggle('can-scroll-left', canScroll && wrapper.scrollLeft > 1);
+    wrapper.classList.toggle('can-scroll-right', canScroll && wrapper.scrollLeft < maxScrollLeft - 1);
+
+    if (canScroll) {
+      wrapper.tabIndex = 0;
+      wrapper.setAttribute('role', 'region');
+      wrapper.setAttribute('aria-label', '可横向滚动的表格');
+    } else {
+      wrapper.removeAttribute('tabindex');
+      wrapper.removeAttribute('role');
+      wrapper.removeAttribute('aria-label');
+    }
+  }
+
+  function updateFloatingHeaders() {
+    const navbar = document.querySelector('.navbar');
+    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+
+    floatingHeaders.forEach(item => {
+      const { table, thead, wrapper } = item;
+      if (!document.contains(table)) return;
+      updateScrollAffordance(wrapper);
+      const tableRect = table.getBoundingClientRect();
+      const headerHeight = thead.offsetHeight;
+      const naturalHeaderTop = thead.getBoundingClientRect().top - item.offset;
+      const desiredOffset = Math.max(0, navbarHeight - naturalHeaderTop);
+      const maxOffset = Math.max(0, tableRect.bottom - headerHeight - naturalHeaderTop);
+      const offset = tableRect.bottom > 0 ? Math.min(desiredOffset, maxOffset) : 0;
+
+      thead.style.transform = offset > 0 ? `translateY(${offset}px)` : '';
+      thead.classList.toggle('is-floating', offset > 0);
+      item.offset = offset;
+    });
+
+    floatingHeaderTicking = false;
   }
 
   function sortTable(table, columnIndex, headerElement) {
@@ -53,6 +149,7 @@
     // Clear all sort indicators
     table.querySelectorAll('th').forEach(th => {
       th.classList.remove('sort-asc', 'sort-desc');
+      th.setAttribute('aria-sort', 'none');
     });
     
     // Determine new sort direction
@@ -67,6 +164,7 @@
     
     // Apply sort indicator
     headerElement.classList.add(`sort-${newSort}`);
+    headerElement.setAttribute('aria-sort', newSort === 'asc' ? 'ascending' : 'descending');
     
     // Sort rows
     rows.sort((rowA, rowB) => {
@@ -127,8 +225,12 @@
     initTableEnhancements();
   }
 
-  // Support for PJAX (if used)
-  if (window.PJAX) {
+  // Support the theme's jQuery PJAX lifecycle without duplicating handlers.
+  if (window.jQuery) {
+    window.jQuery(document)
+      .off('pjax:complete.tableEnhance')
+      .on('pjax:complete.tableEnhance', initTableEnhancements);
+  } else {
     document.addEventListener('pjax:complete', initTableEnhancements);
   }
 
