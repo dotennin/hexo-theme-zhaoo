@@ -3,9 +3,9 @@
   <div class="toc-overlay"></div>
   
   <!-- 目录内容 -->
-  <aside class="toc-wrap">
+  <aside class="toc-wrap" id="post-toc" aria-labelledby="post-toc-title">
     <div class="toc-header">
-      <h3 class="toc-title">文章目录</h3>
+      <h3 class="toc-title" id="post-toc-title">文章目录</h3>
       <button class="toc-close-btn" aria-label="Close Table of Contents">×</button>
     </div>
     <%- toc(page.content, {list_number: false, min_depth: theme.toc.min_depth, max_depth: theme.toc.max_depth}) %>

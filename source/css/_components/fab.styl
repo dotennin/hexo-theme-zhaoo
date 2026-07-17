@@ -1,4 +1,8 @@
 .fab
+  appearance none
+  margin 0
+  padding 0
+  border 0
   position fixed
   bottom -50px
   right 15px
@@ -11,8 +15,12 @@
   color var(--color-background)
   transition $transition
   box-shadow 0 1px 2px 0 rgba(60, 64, 67, 0.302), 0 1px 3px 1px rgba(60, 64, 67, 0.149)
+  cursor pointer
   i
     font-size 1.5em
+  &:focus-visible
+    outline 2px solid $color-link
+    outline-offset 3px
 @media(hover: hover) and (pointer: fine)
   .fab:hover
     background-color $color-link

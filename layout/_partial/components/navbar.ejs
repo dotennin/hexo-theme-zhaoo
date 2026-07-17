@@ -24,19 +24,19 @@
 %>
 
 <% if (title) { %>
-  <nav class="navbar">
+  <nav class="navbar" aria-label="Primary navigation">
     <div class="left">
       <% if (theme.navbar.back_home && !is_home()) { %>
-        <i class="iconfont iconhome j-navbar-back-home"></i>
+        <button type="button" class="navbar-action iconfont iconhome j-navbar-back-home" aria-label="返回首页"></button>
       <% } %>
       <% if (theme.qrcode.enable) { %>
-        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+        <button type="button" class="navbar-action iconfont iconqrcode j-navbar-qrcode" aria-label="显示当前页面二维码" aria-expanded="false"></button>
       <% } %>
       <% if (theme.color_mode.enable) { %>
-        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+        <button type="button" class="navbar-action iconfont iconmoono" id="color-toggle" color-toggle="light" aria-label="切换深色模式"></button>
       <% } %>
       <% if (theme.search.enable && config.search.path) { %>
-        <i class="iconfont iconsearch j-navbar-search"></i>
+        <button type="button" class="navbar-action iconfont iconsearch j-navbar-search" aria-label="搜索"></button>
       <% } %>
     </div>
     
@@ -46,11 +46,11 @@
     </div>
     
     <!-- 移动端标题 -->
-    <div class="center navbar-title-mobile"><%= title %></div>
+    <a href="<%- url_for('/') %>" class="center navbar-title-mobile"><%= config.title %></a>
     
     <div class="right">
       <!-- 移动端汉堡包菜单按钮 -->
-      <i class="iconfont iconmenu j-navbar-menu-toggle"></i>
+      <button type="button" class="navbar-action iconfont iconmenu j-navbar-menu-toggle" aria-label="打开导航菜单" aria-controls="navbar-mobile-menu" aria-expanded="false"></button>
     </div>
     
     <% if (theme.qrcode.enable) { %>
@@ -58,7 +58,7 @@
     <% } %>
     
     <!-- 移动端下拉菜单 -->
-    <div class="navbar-menu-mobile">
+    <div class="navbar-menu-mobile" id="navbar-mobile-menu">
       <%- menuList %>
       <% if (theme.copyright) { %>
         <div class="navbar-menu-copyright"><%- theme.copyright %></div>

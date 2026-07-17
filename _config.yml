@@ -62,6 +62,7 @@ preview:
     size: cover # css: background-size
     position: center # css: background-position
   motto:
+    eyebrow: Software · Running · Life
     default: 我在开了灯的床头下，想问问自己的心啊。
     color: '#ffffff'
     typing: true

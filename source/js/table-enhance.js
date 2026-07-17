@@ -1,6 +1,6 @@
 /**
  * Enhanced Table Functionality
- * - Sticky header
+ * - Sticky header via CSS
  * - Sortable columns
  * - Responsive wrapper
  */
@@ -29,6 +29,9 @@
       headers.forEach((header, index) => {
         header.classList.add('sortable');
         header.dataset.column = index;
+
+        if (header.dataset.tableSortInitialized === 'true') return;
+        header.dataset.tableSortInitialized = 'true';
         
         // Add click event for sorting
         header.addEventListener('click', function() {
@@ -36,41 +39,7 @@
         });
       });
 
-      // Handle sticky header on scroll
-      const scrollContainer = window; // or a specific scrolling element
-      scrollContainer.addEventListener('scroll', () => handleStickyHeader(table, thead));
-      // Initial check
-      handleStickyHeader(table, thead);
     });
-  }
-
-  function handleStickyHeader(table, thead) {
-    if (!thead) return;
-
-    const tableRect = table.getBoundingClientRect();
-    const headerHeight = document.querySelector('.header-inner')?.offsetHeight || 0;
-
-    // Check if the table is within the viewport
-    if (tableRect.top < window.innerHeight && tableRect.bottom > 0) {
-      // The table is visible
-      const stickyTop = Math.max(0, headerHeight - window.scrollY);
-      
-      if (tableRect.top < headerHeight) {
-        // When scrolling down, header should stick below site header
-        // 54px is fixed header height offset - 1px
-        thead.style.transform = `translateY(${Math.max(0, -tableRect.top + headerHeight + 54)}px)`;
-      } else {
-        // When scrolling up, header is at its normal position
-        thead.style.transform = 'translateY(0)';
-      }
-      
-      // Make header sticky
-      thead.querySelectorAll('th').forEach(th => {
-        th.style.position = 'sticky';
-        th.style.top = `${headerHeight}px`; // Stick below the site header
-      });
-
-    }
   }
 
   function sortTable(table, columnIndex, headerElement) {

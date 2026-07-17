@@ -1,28 +1,26 @@
-  <div class="fab fab-plus">
+  <button type="button" class="fab fab-plus" aria-label="展开快捷操作" aria-expanded="false">
     <i class="iconfont iconplus"></i>
-  </div>
-  <div class="fab fab-up">
+  </button>
+  <button type="button" class="fab fab-up" aria-label="返回页面顶部">
     <i class="iconfont iconcaret-up"></i>
-  </div>
+  </button>
   <% if (is_post() && theme.leancloud.enable) { %>
-    <div class="fab fab-like">
+    <button type="button" class="fab fab-like" aria-label="喜欢这篇文章">
       <i class="iconfont iconheart"></i>
-    </div>
+    </button>
   <% } %>
   <% if (theme.daovoice.enable) { %>
-    <div class="fab fab-daovoice">
+    <button type="button" class="fab fab-daovoice" aria-label="打开消息">
       <i class="iconfont iconcomment"></i>
-    </div>
+    </button>
   <% } %>
   <% if (theme.tencentChao.enable) { %>
-    <a href="https://support.qq.com/product/<%= theme.tencentChao.appId %>" target="_blank">
-      <div class="fab fab-tencent-chao">
-        <i class="iconfont iconcomment"></i>
-      </div>
+    <a class="fab fab-tencent-chao" href="https://support.qq.com/product/<%= theme.tencentChao.appId %>" target="_blank" rel="noopener noreferrer" aria-label="打开反馈页面">
+      <i class="iconfont iconcomment"></i>
     </a>
   <% } %>
   <% if (is_post() && ((theme.toc.always_show && page.toc !== false) || (!theme.toc.always_show && page.toc === true))) { %>
-    <div class="fab fab-toc">
+    <button type="button" class="fab fab-toc" aria-label="打开文章目录" aria-controls="post-toc" aria-expanded="false">
       <i class="iconfont iconmenu"></i>
-    </div>
+    </button>
   <% } %>

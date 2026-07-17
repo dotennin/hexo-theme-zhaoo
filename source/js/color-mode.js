@@ -39,6 +39,7 @@
     toggleElement.classList.remove(removeIconName);
     toggleElement.classList.add(addIconName);
     toggleElement.setAttribute(toggleAttribute, mode);
+    toggleElement.setAttribute('aria-label', mode === 'light' ? '切换深色模式' : '切换浅色模式');
   }
 
   var setHighlightStyle = function (mode) {

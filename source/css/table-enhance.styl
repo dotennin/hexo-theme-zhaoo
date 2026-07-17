@@ -1,3 +1,5 @@
+@import '_variables/variables'
+
 // Enhanced Table Styles
 // - Sticky header with green background
 // - Sortable indicators
@@ -33,7 +35,7 @@ article table
     
     th
       position: sticky !important
-      top: 0px !important
+      top: $navbar-height !important
       z-index: 10 !important
       background: var(--color-text) !important
       color: var(--color-background) !important
@@ -117,11 +119,15 @@ article table
   .markdown-body table,
   .content table,
   article table
+    width: max-content !important
     font-size: 0.9em
     
     thead th
       padding: 6px !important
+      white-space: nowrap
     
     tbody td
       padding: 4px !important
-
+      min-width: 92px
+      max-width: 260px
+      white-space: normal

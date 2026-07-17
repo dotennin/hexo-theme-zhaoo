@@ -1,5 +1,14 @@
-<section class="row post">
-  <% page.posts.each(function (post) { %>
-    <%- partial('_partial/index/item', {post: post}) %>
-  <% }) %>
+<section class="index-section" aria-labelledby="latest-posts-title">
+  <header class="index-header">
+    <div>
+      <p>Latest stories</p>
+      <h2 id="latest-posts-title">最近文章</h2>
+    </div>
+    <a href="<%- url_for('/archives/') %>">查看归档 <span aria-hidden="true">→</span></a>
+  </header>
+  <div class="row post">
+    <% page.posts.each(function (post) { %>
+      <%- partial('_partial/index/item', {post: post}) %>
+    <% }) %>
+  </div>
 </section>

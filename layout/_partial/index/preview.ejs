@@ -25,18 +25,20 @@
                 </svg>
               </div>
               <% } %>
-  </div>
-  <div class="preview-motto-wrapper">
-    <h2 class="preview-motto" id="motto">
-      <% if (!theme.preview.motto.typing) { %>
-        <%= theme.preview.motto.default %>
+    <div class="preview-content">
+      <p class="preview-eyebrow"><%= theme.preview.motto.eyebrow || config.subtitle %></p>
+      <h1 class="preview-title"><%= config.title %></h1>
+      <div class="preview-motto-wrapper">
+        <p class="preview-motto" id="motto">
+          <% if (!theme.preview.motto.typing) { %>
+            <%= theme.preview.motto.default %>
           <% } %>
-    </h2>
-    <% if (theme.preview.motto.typing) { %>
-      <span class="preview-cursor">_</span>
-      <% } %>
-  </div>
-  <div class="preview-scroll">
-    <a href="#container" class="smooth-scroll"><i class="iconfont iconMouse"></i></a>
+        </p>
+        <% if (theme.preview.motto.typing) { %>
+          <span class="preview-cursor">_</span>
+        <% } %>
+      </div>
+      <a href="#container" class="preview-cta smooth-scroll">阅读最新文章 <span aria-hidden="true">↓</span></a>
+    </div>
   </div>
 </div>

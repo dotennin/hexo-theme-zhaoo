@@ -4,12 +4,16 @@
   span, a
     display inline-block
     margin 0 3px
-    width 30px
-    height 30px
-    line-height 30px
+    width 38px
+    height 38px
+    line-height 38px
+    border-radius $radius-sm
   span, a:hover
     background-color var(--color-text)
     color var(--color-background)
   .space
     color var(--color-text)
     background-color rgba(0, 0, 0, 0)
+  a:focus-visible
+    outline 2px solid $color-link
+    outline-offset 2px

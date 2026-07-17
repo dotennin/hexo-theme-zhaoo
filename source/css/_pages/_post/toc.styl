@@ -19,17 +19,20 @@
 
 .toc-wrap
   position fixed
-  top 70px
+  top 'calc(%s + 15px)' % $navbar-height
   background-color var(--color-background)
   z-index 999
   padding 20px
-  height calc(100vh - 140px)
+  height 'calc(100vh - %s - 30px)' % $navbar-height
   overflow auto
   transition transform 0.3s ease
   
   // 桌面端样式
   @media (min-width 1201px)
     display block
+    width 240px
+    border 1px solid var(--color-border)
+    border-radius $radius-md
   
   // 移动端样式
   @media (max-width 1200px)
@@ -86,10 +89,13 @@
       color var(--color-text)
       cursor pointer
       padding 0
-      width 32px
-      height 32px
+      width $hit-target
+      height $hit-target
       &:hover
         color var(--color-link)
+      &:focus-visible
+        outline 2px solid $color-link
+        outline-offset -2px
   
   .toc
     position relative
@@ -114,3 +120,9 @@
     
     .toc-child
       padding-left 1rem
+
+@media (max-width 1200px)
+  .toc-wrap .toc .toc-link
+    min-height $hit-target
+    display flex
+    align-items center

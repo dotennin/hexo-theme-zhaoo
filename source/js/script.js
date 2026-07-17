@@ -3,6 +3,8 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
 (function ($) {
   "use strict";
 
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   var fn = {
     showMenu: function () {
       $(".menu").fadeIn(300);
@@ -37,6 +39,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       $(".fab-daovoice").addClass("fab-daovoice-active");
       $(".fab-tencent-chao").addClass("fab-tencent-chao-active");
       $(".fab-like").addClass("fab-like-active");
+      $(".fab-plus").attr("aria-expanded", "true");
     },
     freezeFab: function () {
       $(".fab-up").removeClass("fab-up-active");
@@ -45,6 +48,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       $(".fab-daovoice").removeClass("fab-daovoice-active");
       $(".fab-tencent-chao").removeClass("fab-tencent-chao-active");
       $(".fab-like").removeClass("fab-like-active");
+      $(".fab-plus").attr("aria-expanded", "false");
     },
     showFab: function () {
       $(".fab").removeClass("fab-hide").addClass("fab-show");
@@ -65,7 +69,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     scroolToTop: function () {
       $('body,html').animate({
         scrollTop: '0px'
-      }, 800);
+      }, prefersReducedMotion ? 0 : 800);
     },
     navbar: {
       mobile: function () {
@@ -132,22 +136,32 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     motto: function () {
       if (CONFIG.preview.motto.api) {
         var data_contents = CONFIG.preview.motto.data_contents && JSON.parse(CONFIG.preview.motto.data_contents);
-        $.get(CONFIG.preview.motto.api, function (result) {
-          if (data_contents.length > 0) {
-            data_contents.forEach(function (item) {
-              result = result[item];
-            });
+        $.ajax({
+          url: CONFIG.preview.motto.api,
+          dataType: 'json',
+          timeout: 5000
+        }).done(function (result) {
+          try {
+            if (data_contents && data_contents.length > 0) {
+              data_contents.forEach(function (item) {
+                result = result && typeof result === 'object' ? result[item] : null;
+              });
+            }
+            result = typeof result === 'string' && result.trim() ? result : CONFIG.preview.motto.default;
+          } catch (error) {
+            result = CONFIG.preview.motto.default;
           }
-          if (result) {
-            fn.printMotto(result);
-          }
+          fn.printMotto(result);
+        }).fail(function () {
+          fn.printMotto(CONFIG.preview.motto.default);
         });
       } else {
         fn.printMotto(CONFIG.preview.motto.default);
       }
     },
     printMotto: function (text) {
-      if (CONFIG.preview.motto.typing) {
+      text = typeof text === 'string' && text.trim() ? text : CONFIG.preview.motto.default;
+      if (CONFIG.preview.motto.typing && !prefersReducedMotion) {
         if (text.charAt(text.length - 1) === '。') {
           text = text.substr(0, text.length - 1);
         }
@@ -255,7 +269,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
             var targetOffset = $target.offset().top;
             $("html,body").animate({
               scrollTop: targetOffset
-            }, 500);
+            }, prefersReducedMotion ? 0 : 500);
             location.hash = this.hash;
             return false;
           }
@@ -278,7 +292,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
         daovoice('openMessages');
       });
       // 点击其他按钮时收起FAB菜单
-      $(".fab-up, .fab-toc, .fab-like, .fab-daovoice, .fab-tencent-chao").on("click", function () {
+      $(".fab-up, .fab-like, .fab-daovoice, .fab-tencent-chao").on("click", function () {
         fn.freezeFab();
       });
       if (CONFIG.fab.always_show) {
@@ -297,7 +311,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       $(".fab-up").on("click", function () {
         $('body,html').animate({
           scrollTop: '0px'
-        }, 800);
+        }, prefersReducedMotion ? 0 : 800);
       });
     },
     fancybox: function () {
@@ -358,18 +372,31 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       // 移动端菜单切换
       $(".j-navbar-menu-toggle").on("click", function (e) {
         e.stopPropagation();
-        $(".navbar-menu-mobile").toggleClass("show");
+        var isOpen = $(".navbar-menu-mobile").hasClass("show");
+        $(".navbar-menu-mobile").toggleClass("show", !isOpen);
+        $(this).attr("aria-expanded", String(!isOpen));
       });
       
       // 点击菜单项后关闭移动端菜单
       $(".navbar-menu-mobile .navbar-menu-item").on("click", function () {
         $(".navbar-menu-mobile").removeClass("show");
+        $(".j-navbar-menu-toggle").attr("aria-expanded", "false");
       });
       
       // 点击页面其他地方关闭移动端菜单
       $(document).on("click", function (e) {
         if (!$(e.target).closest(".navbar").length) {
           $(".navbar-menu-mobile").removeClass("show");
+          $(".j-navbar-menu-toggle").attr("aria-expanded", "false");
+        }
+      });
+
+      $(document).on("keydown.navbar", function (e) {
+        if (e.key === "Escape") {
+          $(".navbar-menu-mobile").removeClass("show");
+          $(".j-navbar-menu-toggle").attr("aria-expanded", "false");
+          $("#qrcode-navbar").fadeOut(150);
+          $(".j-navbar-qrcode").attr("aria-expanded", "false");
         }
       });
       
@@ -380,11 +407,13 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       });
       
       $(".j-navbar-qrcode").on("click", function () {
-        if ($("#qrcode-navbar").is(":hidden")) {
+        var isHidden = $("#qrcode-navbar").is(":hidden");
+        if (isHidden) {
           $("#qrcode-navbar").fadeIn(300);
         } else {
           $("#qrcode-navbar").fadeOut(300);
         }
+        $(this).attr("aria-expanded", String(isHidden));
       });
       $(".j-navbar-back-home").on("click", function () {
         window.location.href = "/";
@@ -410,26 +439,34 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       }
     },
     toc: function () {
-      var current = [];
-      var titleList = new Map();
-      $("article .content h1,h2,h3,h4,h5,h6").each(function () {
-        var title = $(this).attr("id");
-        var height = $(this).offset().top;
-        titleList.set(height, title);
-      });
-      $(window).on("scroll", f);
-      function f() {
-        var height = $(this).scrollTop() || $(window).scrollTop();
-        for (var item of titleList) {
-          if (item[0] >= height) {
-            current = item;
-            break;
-          }
+      var titleList = [];
+      $("article .content h1, article .content h2, article .content h3, article .content h4, article .content h5, article .content h6").each(function () {
+        if ($(this).attr("id")) {
+          titleList.push({
+            id: $(this).attr("id"),
+            top: $(this).offset().top
+          });
         }
+      });
+      if (!titleList.length) {
+        $(".toc-wrap, .toc-overlay, .fab-toc").hide();
+        return;
+      }
+      $(window).off("scroll.toc").on("scroll.toc", updateActiveToc);
+      function updateActiveToc() {
+        var scrollTop = $(window).scrollTop() + $(".navbar").outerHeight() + 32;
+        var currentId = titleList[0].id;
+        titleList.forEach(function (item) {
+          if (scrollTop >= item.top) {
+            currentId = item.id;
+          }
+        });
         $(".toc-link").removeClass("active");
-        $(".toc-link[href='#" + current[1] + "']").addClass("active");
-      };
-      f();
+        $(".toc-link").filter(function () {
+          return decodeURIComponent(this.hash.slice(1)) === currentId;
+        }).addClass("active");
+      }
+      updateActiveToc();
     },
     mobileToc: function () {
       // 移动端目录功能
@@ -437,33 +474,102 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
       var $closeBtn = $(".toc-close-btn");
       var $tocWrap = $(".toc-wrap");
       var $overlay = $(".toc-overlay");
-      
-      function openToc() {
-        $tocWrap.addClass('toc-open');
-        $overlay.addClass('toc-overlay-visible');
-        $("body").css("overflow", "hidden");
+      var $tocOpener = $();
+
+      function getFocusableElements() {
+        return $tocWrap.find('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])').filter(":visible");
       }
       
-      function closeToc() {
+      function openToc() {
+        if ($(window).width() > 1200) return;
+        $tocOpener = $(document.activeElement);
+        $tocWrap.addClass('toc-open');
+        $tocWrap.attr({ role: "dialog", "aria-modal": "true" });
+        $overlay.addClass('toc-overlay-visible');
+        $("body").css("overflow", "hidden");
+        $fabToc.attr("aria-expanded", "true");
+        $closeBtn.trigger("focus");
+      }
+      
+      function closeToc(restoreFocus) {
         $tocWrap.removeClass('toc-open');
+        $tocWrap.removeAttr("role aria-modal");
         $overlay.removeClass('toc-overlay-visible');
         $("body").css("overflow", "");
+        $fabToc.attr("aria-expanded", "false");
+        if (restoreFocus !== false && $tocOpener.length) {
+          $tocOpener.trigger("focus");
+        }
       }
       
       // fab-toc按钮的点击在fab函数中已经有freezeFab，所以这里只需要打开目录
-      $fabToc.on("click", function(e) {
+      $fabToc.off("click.mobileToc").on("click.mobileToc", function() {
         openToc();
       });
       
-      $closeBtn.on("click", closeToc);
-      $overlay.on("click", closeToc);
+      $closeBtn.off("click.mobileToc").on("click.mobileToc", function () {
+        closeToc(true);
+      });
+      $overlay.off("click.mobileToc").on("click.mobileToc", function () {
+        closeToc(true);
+      });
+
+      $(document).off("keydown.toc").on("keydown.toc", function(e) {
+        if (!$tocWrap.hasClass("toc-open")) return;
+        if (e.key === "Escape") {
+          closeToc(true);
+          return;
+        }
+        if (e.key === "Tab") {
+          var $focusable = getFocusableElements();
+          if (!$focusable.length) return;
+          var firstElement = $focusable.get(0);
+          var lastElement = $focusable.get($focusable.length - 1);
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      });
+
+      $(window).off("resize.mobileToc").on("resize.mobileToc", ZHAOO.utils.throttle(function () {
+        if ($(window).width() > 1200 && $tocWrap.hasClass("toc-open")) {
+          closeToc(false);
+        }
+      }, 200));
       
       // 点击目录链接后关闭目录（移动端）
       $(".toc-link").on("click", function() {
         if ($(window).width() <= 1200) {
-          setTimeout(closeToc, 300);
+          setTimeout(function () {
+            closeToc(false);
+          }, prefersReducedMotion ? 0 : 300);
         }
       });
+    },
+    readingProgress: function () {
+      if (!$(".article").length) return;
+      if (!$(".reading-progress").length) {
+        $("body").append('<div class="reading-progress" aria-hidden="true"><div class="reading-progress-bar"></div></div>');
+      }
+      var ticking = false;
+      function updateProgress() {
+        var scrollableHeight = $(document).height() - $(window).height();
+        var progress = scrollableHeight > 0 ? $(window).scrollTop() / scrollableHeight : 0;
+        progress = Math.max(0, Math.min(1, progress));
+        $(".reading-progress-bar").css("transform", "scaleX(" + progress + ")");
+        ticking = false;
+      }
+      $(window).off("scroll.readingProgress").on("scroll.readingProgress", function () {
+        if (!ticking) {
+          window.requestAnimationFrame(updateProgress);
+          ticking = true;
+        }
+      });
+      updateProgress();
     },
     scrollbar: function () {
       var totalH = $(document).height();
@@ -542,6 +648,7 @@ console.log("%c Github %c", "background:#333333; color:#ffffff", "", "https://gi
     CONFIG.qrcode.enable && action.qrcode();
     CONFIG.toc.enable && action.toc();
     CONFIG.toc.enable && action.mobileToc();
+    action.readingProgress();
     CONFIG.scrollbar.type === 'simple' && action.scrollbar();
     CONFIG.notification.enable && action.notification();
     CONFIG.search.enable && action.search();

@@ -6,7 +6,7 @@ html
     filter grayscale(100%)
 body
   margin 0
-  padding-top 55px
+  padding-top $navbar-height
   font-size unquote(hexo-config('font.size') || 14px)
   color var(--color-text)
   font-family unquote(hexo-config('font.family') || 'Hiragino Sans GB', 'Hiragino Sans GB W3', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif)
@@ -91,9 +91,6 @@ for $i in 1 .. 12
     width 100%
     padding-right 15px
     padding-left 15px
-    @media (max-width 576px)
-      padding-right 0
-      padding-left 0
 col-attr()
   -ms-flex 0 0 arguments
   flex 0 0 arguments
